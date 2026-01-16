@@ -1,0 +1,38 @@
+name: vpn
+
+services:
+  wireguard:
+    image: wireguard
+    build: .
+    container_name: vpn
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    sysctls:
+      # Patch wg-quick if getting "sysctl: permission denied on key net.ipv4.conf.all.src_valid_mark" error.
+      #
+      # Credits: @kianbahasadri from (https://forums.docker.com/t/sysctl-error-setting-key-net-ipv4-conf-all-src-valid-mark-read-only-file-system/92567/10) 
+      # and https://github.com/linuxserver/docker-wireguard
+      #
+      # See also
+      # https://github.com/wg-easy/wg-easy/issues/2261
+      # and 
+      # https://github.com/WireGuard/wireguard-tools/pull/29/files
+      - net.ipv4.conf.all.src_valid_mark=1
+    networks:
+      - vpn
+    dns:
+      - 127.0.0.1
+    command: bash -c "envsubst < wg0.conf-template > /etc/wireguard/wg0.conf && wg-quick up wg0 && ./dnscrypt-proxy"
+    environment:
+      # required
+      - WG_ADDRESS=
+      - WG_PRIVATEKEY=
+      - WG_PEER_PUBLICKEY=
+      - WG_PEER_ENDPOINT=
+
+# Network creation: `docker network create vpn`
+networks:
+  vpn:
+    external: true

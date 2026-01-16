@@ -1,0 +1,18 @@
+server_names = ['static_cloudflare']
+
+listen_addresses = ['127.0.0.1:53']
+
+log_level = 5
+use_syslog = true
+
+ignore_system_dns = true
+
+cache = true
+
+[static]
+
+[static.static_cloudflare]
+  # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
+  # and 
+  # https://adguard-dns.io/kb/miscellaneous/create-dns-stamp/
+  stamp = 'sdns://AgcAAAAAAAAABzEuMC4wLjEAEmRucy5jbG91ZGZsYXJlLmNvbQovZG5zLXF1ZXJ5'
