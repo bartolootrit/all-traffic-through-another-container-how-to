@@ -38,3 +38,23 @@ Other local containers in the Docker network should be accessible by their names
 DNSCrypt fetches a [public server list](https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md) by default. `server_names = ['static_cloudflare']` tells it to use the static server list in [DNS stamp](https://adguard-dns.io/kb/miscellaneous/create-dns-stamp/) format.
 
 The downside of this approach is that `app` will lose network access if `wireguard` is restarted
+
+# Another approach: Wireguard integration into Docker image
+
+Wireguard is optionally added to the `app` image without changes in `Dockerfile` or `docker-compose.yml`, so `app` may go through VPN if needed.
+
+Credits: [Philip Couling](https://stackoverflow.com/a/79773615/704244)
+
+`cd wireguard-integration`
+
+#### Build and run without Wireguard
+
+`docker compose up app`
+
+#### Build with Wireguard
+
+`docker buildx bake app-vpn`
+
+#### Run with Wireguard
+
+`docker compose -f docker-compose.yml -f docker-compose.vpn.yml -f docker-compose.override.yml up app`

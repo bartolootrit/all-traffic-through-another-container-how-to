@@ -1,0 +1,11 @@
+services:
+  app:
+    image: local-image:latest
+    build:
+      context: .
+    command: sleep 3600
+    depends_on:
+      - redis
+    
+  redis:
+    image: redis:8.4.0-bookworm@sha256:73dad4271642c5966db88db7a7585fae7cf10b685d1e48006f31e0294c29fdd7

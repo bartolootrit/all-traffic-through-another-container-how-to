@@ -1,0 +1,9 @@
+[Interface]
+Address = ${WG_ADDRESS}
+ListenPort = 51820
+PrivateKey = ${WG_PRIVATEKEY}
+
+[Peer]
+PublicKey = ${WG_PEER_PUBLICKEY}
+Endpoint = ${WG_PEER_ENDPOINT}
+AllowedIPs = 0.0.0.0/0

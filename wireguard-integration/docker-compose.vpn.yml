@@ -1,0 +1,33 @@
+services:
+  # How to build:
+  # docker buildx bake <service_name>
+  # See docker-bake.hcl
+  #
+  # How to run:
+  # Define WG_* vars in docker-compose.override.yml
+  # docker compose -f docker-compose.yml -f docker-compose.vpn.yml -f docker-compose.override.yml up <service_name>
+  #
+  app:
+    image: local-image:vpn
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    sysctls:
+      # Patch wg-quick if getting "sysctl: permission denied on key net.ipv4.conf.all.src_valid_mark" error.
+      #
+      # Credits: @kianbahasadri from (https://forums.docker.com/t/sysctl-error-setting-key-net-ipv4-conf-all-src-valid-mark-read-only-file-system/92567/10) 
+      # and https://github.com/linuxserver/docker-wireguard
+      #
+      # See also
+      # https://github.com/wg-easy/wg-easy/issues/2261
+      # and 
+      # https://github.com/WireGuard/wireguard-tools/pull/29/files
+      - net.ipv4.conf.all.src_valid_mark=1
+    dns:
+      - 127.0.0.1
+    environment:
+      - WG_ADDRESS=  # required. e.g. 10.0.0.2/24
+      - WG_PRIVATEKEY=  # required
+      - WG_PEER_PUBLICKEY=  # required
+      - WG_PEER_ENDPOINT=  # required. e.g. 1.1.1.1:51821
